@@ -7,26 +7,26 @@ from scipy.stats import t
 
 """ error in measurements """
 # Volume
-V_meas = np.array([0.00172,0.005,0.015,0.03,0.03])
+V_meas = np.array([])
 
 # Volume uncertainty
-V_err = np.array([0.00001,0.0005,0.0005,0.0005,0.0005])
+V_err = np.array([])
 
 # Measured time
-t_meas = np.array([40.2,23.3,31,46.2,39.1])
+t_meas = np.array([])
 
 t_err = 0.2  # time error 
 
 # Pressure drop
-deltaP = np.array([39,723,2934,5100,7200])
+deltaP = np.array([])
 
 # Pressure uncertainty
-P_err = np.array([4.9,4.9,4.9,1000,1000])  
+P_err = np.array([])  
 # 4.9 Pa for analogue, 1000 Pa for digital
 
 
-mu = 0.000862
-rho = 997
+mu = 1 #Use value from Omni Calc
+rho = 997 #Use value from Omni Calc
 D = 0.017
 area = np.pi * D**2 / 4
 
@@ -36,7 +36,7 @@ area = np.pi * D**2 / 4
 """ flow rate/ uncertainty"""
 Q = V_meas / t_meas
 
-Q_err = Q * ((V_err / V_meas) +(t_err / t_meas))
+Q_err = Q * np.sqrt((V_err / V_meas)**2 +(t_err / t_meas)**2)
 
 """Velocity/uncertainty"""
 
@@ -54,9 +54,9 @@ f_exp = (2 * deltaP * D) / (rho * velocity**2)
 Re_err = Re * (velocity_err / velocity)
 
 """friction factor error"""
-f_err = f_exp * (
-    (P_err / deltaP) +
-    (2 * velocity_err / velocity))
+f_err = f_exp * np.sqrt(
+    (P_err / deltaP)**2 +
+    (2 * velocity_err / velocity)**2)
 
 
 """ Only keep turbulent data to avoid fitting the laminar point"""
@@ -153,7 +153,7 @@ plt.legend()
 plt.xlim(1e2, 1e7)
 plt.ylim(0.008, 0.2)
 
-
+plt.savefig(r'FILELOCATION', dpi=300)
 
 plt.show()
 
@@ -170,5 +170,16 @@ print(f"R² = {r_squared:.5f}")
 
 """ add data to CSV"""
 
+data = { 
+    'Volume': V_meas,
+    'Volume error': V_err,
+    'Time': t_meas,
+    'Pressure difference': deltaP,
+    'Pressure error': P_err,
+    'Friction factor': f_exp,
+    'Reynolds number': Re,
+    'Temperature': 26}
 
+df =  pd.DataFrame(data)
 
+df.to_csv(r'FILELOCATION')
