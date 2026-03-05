@@ -36,7 +36,7 @@ area = np.pi * D**2 / 4
 """ flow rate/ uncertainty"""
 Q = V_meas / t_meas
 
-Q_err = Q * np.sqrt((V_err / V_meas)**2 +(t_err / t_meas)**2)
+Q_err = Q * ((V_err / V_meas) +(t_err / t_meas))
 
 """Velocity/uncertainty"""
 
@@ -54,9 +54,7 @@ f_exp = (2 * deltaP * D) / (rho * velocity**2)
 Re_err = Re * (velocity_err / velocity)
 
 """friction factor error"""
-f_err = f_exp * np.sqrt(
-    (P_err / deltaP)**2 +
-    (2 * velocity_err / velocity)**2)
+f_err = f_exp *((P_err / deltaP) + (2 * velocity_err / velocity))
 
 
 """ Only keep turbulent data to avoid fitting the laminar point"""
